@@ -4,10 +4,7 @@
 
 This project is under the GNU Public License 2.0.
 
-A WebExtension which can display/remove duplicate bookmarks, empty folders, or descriptions
-
-Available on AMO here:
-https://addons.mozilla.org/firefox/addon/bookmark-dupes/
+A WebExtension which can display/remove duplicate bookmarks or empty folders.
 
 After installing bookmarkdupes, the usage is rather simple:
 
@@ -20,18 +17,15 @@ Then select what you want to display:
 1. Bookmark duplicates
 2. Empty folders
 3. Non-duplicate bookmarks
-4. All bookmarks
 
 After this, you will be offered the list of bookmarks with checkboxes;
 in case 1 the numbers indicate the order in which matching bookmarks
 were added according to the internally stored date.
 There are also buttons to select/unselect convenient sets of checkboxes.
 
-Finally, there are buttons to remove the selected bookmarks in cases 1-3
-or to strip the descriptions of the selected bookmarks in case 4.
-(The latter has some side effects, see section **Known Bugs**).
+Finally, there are buttons to remove the selected bookmarks.
 
-**Be aware that removing bookmarks or stripping descriptions is irreversible!**
+**Be aware that removing bookmarks is irreversible!**
 *It is recommended to make backups of your bookmarks first!*
 
 Currently, there is no working version of the extension available for android
@@ -41,9 +35,7 @@ Currently, there is no working version of the extension available for android
 
 When you reorganized/added/removed bookmarks, make sure to update the
 displayed list (by pressing the corresponding button) before removing
-bookmarks or stripping descriptions!
-In particular, stripping descriptions with an outdated list will move
-the corresponding bookmarks to their previous location in the bookmark menu!
+bookmarks!
 
 ## Permissions
 
@@ -52,8 +44,7 @@ The extension requires the following permissions for these reasons:
 1. “bookmarks” to read/modify bookmarks
 2. “storage” to store/restore the customized rules in expert mode.
    Unfortunately, “storage” is not one of the optional permissions which might
-   be required only if that feature is actually requested by the user, see
-   https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/optional_permissions
+   be required only if that feature is actually requested by the user.
 
 ## Expert Mode
 
@@ -79,11 +70,7 @@ expressions must be nonempty or that filter rules will not apply either.)
 The 4 regular expressions refer to the bookmark's name or url, respectively,
 and the regular expressions must either match or not match, respectively.
 
-- The term “regular expression” refers to a javascript type regular expression
-  as described e.g. in
-  https://wiki.selfhtml.org/wiki/JavaScript/Objekte/RegExp
-  or
-  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+- The term “regular expression” refers to a javascript type regular expression.
 - The bookmark's name refers to the full bookmark path as it appears in the
   browser with folder names separated by the null character.
   For instance, if you have in “Bookmark Menu” a folder “Collection”
@@ -101,10 +88,7 @@ If a URL modification rule applies, a text replacement will occur:
 All parts matching a specified regular expression are substituted by a
 replacement text (which might be empty).
 The rules for this correspond to the javascript String.prototype.replace
-function with the global modifier, see e.g.
-https://wiki.selfhtml.org/wiki/JavaScript/Objekte/String/replace
-or
-https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/String/replace
+function with the global modifier.
 
 In particular, the replacement text can contain symbols like
 `$&` or `$1` to refer to the whole matched text or to the
@@ -165,14 +149,14 @@ in all URLs.
 
 Explanation: If a bookmark is in a folder named “Mr. Dupe”, its full name (path) will contain the text “\0Mr. Dupe\0”; so match that text. Since the “.” symbol has a special meaning for regular expressions, we have to quote it. This can be done by either `\.` or by looking for a character class `[…]` which contains only the single symbol `.`.
 
-4. Use the replacement rule: “Replace URL matches” `.+` “by” `http://dummy`
+4. Use the replacement rule: “Replace URL matches” `.+` “by” `constant`
 
-Explanation: Pretend that every bookmark has the URL `http://dummy` by replacing all characters (`.+`) of the original URL by that text.
+Explanation: Pretend that every bookmark has the URL `constant` by replacing all characters (`.+`) of the original URL by that text.
 
-5. Use the replacement rule: “Name Matches” `^Bookmark Menu\0Remove\0` “Replace URL matches” `.+` “by” `http://dummy`
+5. Use the replacement rule: “Name Matches” `^Bookmark Menu\0Remove\0` “Replace URL matches” `.+` “by” `constant`
 
 As in 4, but only for bookmarks whose full name starts with the matching path.
-This works only if the folder contains at least 2 bookmarks (because otherwise `http://dummy` is not a duplicate URL). Of course, one might use an actually duplicate URL instead of `http://dummy` to work around this limitation.
+This works only if the folder contains at least 2 bookmarks (because otherwise `constant` is not a duplicate URL). Of course, one might use an actually duplicate URL instead of `constant` to work around this limitation.
 
 6. Use the replacement rule: “Replace URL matches” `.+` “by” `$TITLE`
 
@@ -181,24 +165,6 @@ Explanation: Replace all bookmark URLs by the corresponding bookmark title when 
 7. Use the replacement rule “Replace URL matches” `.+` “by” `$NAME` followed by a further replacement rule “Replace URL matches” `[^\0]*$` “by” ` ` (empty string)
 
 Explanation: First replace the URL by its full name path, and then omit the last component of this path by cutting of the longest sequence of non-`\0`-symbols at the end.
-
-## Known Bugs
-
-1. Live bookmarks are falsely recognized as empty folders, see
-   https://github.com/vaeth/bookmarkdupes/issues/4
-2. Stripping of descriptions works by replacing the bookmark by a freshly
-   created one. In particular, it updates the bookmark creation date.
-3. Stripping of descriptions creates bookmarks in the place where it was when
-   the displayed list was calculated, see
-   https://github.com/vaeth/bookmarkdupes/issues/11 and the second part of
-   https://github.com/vaeth/bookmarkdupes/issues/8
-4. In some firefox versions (e.g. 55.0.3) it has been reported that pressing
-   the duplicate stars does not open a new tab. You can try to use the link
-   in the options page of the extension instead if you have this problem.
-   The reason for the problem is still unknown, see
-   https://github.com/vaeth/bookmarkdupes/issues/38
-5. Android lacks the bookmark API necessary for bookmarkdupes:
-   https://github.com/vaeth/bookmarkdupes/issues/53
 
 ## Contributors
 
